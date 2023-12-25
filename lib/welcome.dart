@@ -1,4 +1,6 @@
-
+import 'package:asyikaja/home.dart';
+import 'package:asyikaja/register.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
 import 'login.dart';
@@ -11,6 +13,8 @@ class WelcomePage extends StatefulWidget {
 }
 
 class _WelcomePageState extends State<WelcomePage> {
+  bool isLoading = true;
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -35,25 +39,57 @@ class _WelcomePageState extends State<WelcomePage> {
               const SizedBox(
                 height: 64,
               ),
-              ElevatedButton(
-                  onPressed: () {
-                    Navigator.push(context,
-                        MaterialPageRoute(builder: (context) => const LoginPage()));
-                  },
-                  child: const Padding(
-                      padding: EdgeInsets.all(16), child: Text("Masuk"))),
-              const SizedBox(
-                height: 12,
-              ),
-              ElevatedButton(
-                  onPressed: () {
-                    Navigator.push(context,
-                        MaterialPageRoute(builder: (context) => const LoginPage()));
-                  },
-                  child: const Padding(
-                      padding: EdgeInsets.all(16), child: Text("Daftar")))
+              isLoading
+                  ? const CircularProgressIndicator()
+                  : Column(
+                      children: [
+                        ElevatedButton(
+                            onPressed: () {
+                              Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) => const LoginPage()));
+                            },
+                            child: const Padding(
+                                padding: EdgeInsets.all(16),
+                                child: Text("Masuk"))),
+                        const SizedBox(
+                          height: 12,
+                        ),
+                        ElevatedButton(
+                            onPressed: () {
+                              Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) =>
+                                          const RegisterPage()));
+                            },
+                            child: const Padding(
+                                padding: EdgeInsets.all(16),
+                                child: Text("Daftar")))
+                      ],
+                    )
             ],
           ),
         ));
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    FirebaseAuth.instance.authStateChanges().listen((User? user) {
+      if (mounted) {
+        if (user == null) {
+          setState(() {
+            isLoading = false;
+          });
+        } else {
+          Navigator.pushAndRemoveUntil(
+              context,
+              MaterialPageRoute(builder: (c) => const HomePage()),
+              (route) => false);
+        }
+      }
+    });
   }
 }

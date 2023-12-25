@@ -2,14 +2,14 @@ import 'package:asyikaja/home.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
-class LoginPage extends StatefulWidget {
-  const LoginPage({super.key});
+class RegisterPage extends StatefulWidget {
+  const RegisterPage({super.key});
 
   @override
-  State<StatefulWidget> createState() => LoginPageState();
+  State<StatefulWidget> createState() => RegisterPageState();
 }
 
-class LoginPageState extends State<LoginPage> {
+class RegisterPageState extends State<RegisterPage> {
   bool isLoading = false;
 
   TextEditingController usernameCtl = TextEditingController(),
@@ -30,14 +30,14 @@ class LoginPageState extends State<LoginPage> {
             child:
                 Column(mainAxisAlignment: MainAxisAlignment.center, children: [
               const Text(
-                "Login ke AsyikAja",
+                "Daftar ke AsyikAja",
                 style: TextStyle(fontFamily: 'Alata', fontSize: 18),
               ),
               const SizedBox(
                 height: 24,
               ),
               const Text(
-                "Selamat Datang kembali! Masuk menggunakan akun sosial atau email anda untuk melanjutkan",
+                "Selamat Datang! Masuk menggunakan akun sosial atau email anda untuk melanjutkan",
                 style: TextStyle(fontFamily: 'Abel', color: Colors.white),
                 textAlign: TextAlign.center,
               ),
@@ -52,6 +52,7 @@ class LoginPageState extends State<LoginPage> {
                   )),
               TextFormField(
                   controller: passwordCtl,
+                  obscuringCharacter: "*",
                   decoration: const InputDecoration(
                     border: UnderlineInputBorder(),
                     labelText: 'Password',
@@ -63,27 +64,44 @@ class LoginPageState extends State<LoginPage> {
                   ? const CircularProgressIndicator()
                   : ElevatedButton(
                       onPressed: () async {
-                        setState(() {
-                          isLoading = true;
-                        });
+                        isLoading = true;
                         try {
-                          final credential = await FirebaseAuth.instance
-                              .signInWithEmailAndPassword(
+                          await FirebaseAuth.instance
+                              .createUserWithEmailAndPassword(
                                   email: usernameCtl.text,
                                   password: passwordCtl.text);
                         } on FirebaseAuthException catch (e) {
-                          if (e.code == 'user-not-found') {
-                            errorMessage = 'No user found for that email.';
-                          } else if (e.code == 'wrong-password') {
-                            errorMessage =
-                                'Wrong password provided for that user.';
+                          switch (e.code) {
+                            case "ERROR_INVALID_EMAIL":
+                              errorMessage =
+                                  "Your email address appears to be malformed.";
+                              break;
+                            case "ERROR_WRONG_PASSWORD":
+                              errorMessage = "Your password is wrong.";
+                              break;
+                            case "ERROR_USER_NOT_FOUND":
+                              errorMessage =
+                                  "User with this email doesn't exist.";
+                              break;
+                            case "ERROR_USER_DISABLED":
+                              errorMessage =
+                                  "User with this email has been disabled.";
+                              break;
+                            case "ERROR_TOO_MANY_REQUESTS":
+                              errorMessage =
+                                  "Too many requests. Try again later.";
+                              break;
+                            case "ERROR_OPERATION_NOT_ALLOWED":
+                              errorMessage =
+                                  "Signing in with Email and Password is not enabled.";
+                              break;
+                            default:
+                              errorMessage =
+                                  "An undefined Error happened: ${e.message ?? ""}";
                           }
-                        } catch (e) {
-                          errorMessage = e.toString();
-                        }
-                        setState(() {
                           isLoading = false;
-                        });
+                        }
+                        setState(() {});
 
                         // Navigator.pushAndRemoveUntil(context,
                         //     MaterialPageRoute(builder: (context) => const HomePage()), (route)=>false);

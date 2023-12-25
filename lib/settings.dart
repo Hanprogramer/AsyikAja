@@ -1,4 +1,5 @@
 import 'package:asyikaja/main.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
 import 'welcome.dart';
@@ -48,8 +49,8 @@ class _SettingsPageState extends State<SettingsPage> {
             title: Text("Tentang Aplikasi"),
           ),
           ListTile(
-            onTap: (){
-                Navigator.pushReplacement(context, MaterialPageRoute(builder: (context)=>const WelcomePage()));
+            onTap: () async {
+                await FirebaseAuth.instance.signOut();
             },
             leading: CircleAvatar(
               backgroundColor: Colors.redAccent,
