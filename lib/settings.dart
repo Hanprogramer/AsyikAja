@@ -1,6 +1,8 @@
 import 'package:asyikaja/main.dart';
 import 'package:flutter/material.dart';
 
+import 'welcome.dart';
+
 class SettingsPage extends StatefulWidget {
   const SettingsPage({super.key});
 
@@ -47,7 +49,7 @@ class _SettingsPageState extends State<SettingsPage> {
           ),
           ListTile(
             onTap: (){
-                Navigator.pushReplacement(context, MaterialPageRoute(builder: (context)=>WelcomePage()));
+                Navigator.pushReplacement(context, MaterialPageRoute(builder: (context)=>const WelcomePage()));
             },
             leading: CircleAvatar(
               backgroundColor: Colors.redAccent,

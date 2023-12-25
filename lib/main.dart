@@ -1,7 +1,18 @@
 import 'package:asyikaja/login.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 
-void main() {
+import 'welcome.dart';
+
+void main() async {
+
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp();
+
+// Ideal time to initialize
+//   await FirebaseAuth.instance.useAuthEmulator('localhost', 9099);
+//...
   runApp(const MyApp());
 }
 
@@ -11,7 +22,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Flutter Demo',
+      title: 'AsyikAja',
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
         fontFamily: "Alata",
@@ -21,60 +32,5 @@ class MyApp extends StatelessWidget {
       ),
       home: const WelcomePage(),
     );
-  }
-}
-
-class WelcomePage extends StatefulWidget {
-  const WelcomePage({super.key});
-
-  @override
-  State<WelcomePage> createState() => _WelcomePageState();
-}
-
-class _WelcomePageState extends State<WelcomePage> {
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-        backgroundColor: Theme.of(context).colorScheme.inversePrimary,
-        body: Center(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: <Widget>[
-              Container(
-                decoration: BoxDecoration(
-                    borderRadius: const BorderRadius.all(Radius.circular(200)),
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.black.withOpacity(0.1),
-                        spreadRadius: 5,
-                        blurRadius: 7,
-                        offset: const Offset(0, 3),
-                      )
-                    ]),
-                child: Image.asset("assets/logo.png", width: 190),
-              ),
-              const SizedBox(
-                height: 64,
-              ),
-              ElevatedButton(
-                  onPressed: () {
-                    Navigator.push(context,
-                        MaterialPageRoute(builder: (context) => const LoginPage()));
-                  },
-                  child: const Padding(
-                      padding: EdgeInsets.all(16), child: Text("Masuk"))),
-              const SizedBox(
-                height: 12,
-              ),
-              ElevatedButton(
-                  onPressed: () {
-                    Navigator.push(context,
-                        MaterialPageRoute(builder: (context) => const LoginPage()));
-                  },
-                  child: const Padding(
-                      padding: EdgeInsets.all(16), child: Text("Daftar")))
-            ],
-          ),
-        ));
   }
 }

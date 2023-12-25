@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "365127484042",
+    "project_id": "asyikaja-5af45",
+    "storage_bucket": "asyikaja-5af45.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:365127484042:android:e862af1fc218fbc8936373",
+        "android_client_info": {
+          "package_name": "com.asyikaja.asyikaja"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyA1Mh2f-FKqlHlC7Yg6cTc7OqGnWX9coUM"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
