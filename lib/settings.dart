@@ -1,3 +1,4 @@
+import 'package:asyikaja/main.dart';
 import 'package:flutter/material.dart';
 
 class SettingsPage extends StatefulWidget {
@@ -12,7 +13,7 @@ class _SettingsPageState extends State<SettingsPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: ListView(
-        children: const [
+        children: [
           ListTile(
             leading: CircleAvatar(
               child: Text("H"),
@@ -45,6 +46,9 @@ class _SettingsPageState extends State<SettingsPage> {
             title: Text("Tentang Aplikasi"),
           ),
           ListTile(
+            onTap: (){
+                Navigator.pushReplacement(context, MaterialPageRoute(builder: (context)=>WelcomePage()));
+            },
             leading: CircleAvatar(
               backgroundColor: Colors.redAccent,
               child: Icon(Icons.logout),

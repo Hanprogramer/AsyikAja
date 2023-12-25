@@ -19,15 +19,13 @@ class MyApp extends StatelessWidget {
             seedColor: const Color.fromARGB(255, 255, 199, 0)),
         useMaterial3: true,
       ),
-      home: const WelcomePage(title: 'Flutter Demo Home Page'),
+      home: const WelcomePage(),
     );
   }
 }
 
 class WelcomePage extends StatefulWidget {
-  const WelcomePage({super.key, required this.title});
-
-  final String title;
+  const WelcomePage({super.key});
 
   @override
   State<WelcomePage> createState() => _WelcomePageState();
