@@ -1,4 +1,7 @@
+import 'dart:math';
+
 import 'package:asyikaja/home.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
@@ -16,6 +19,50 @@ class RegisterPageState extends State<RegisterPage> {
       passwordCtl = TextEditingController();
 
   String errorMessage = "";
+  String emailToDisplayName(String email) {
+    // Split the email address into parts
+    final parts = email.split('@');
+    // Handle cases where there's no '@' or only one part
+    if (parts.length < 2) {
+      return email; // Return the original email if it's not a valid format
+    }
+    // Extract the local part (before '@')
+    String name = parts[0];
+    // Handle potential periods in the local part
+    if (name.contains('.')) {
+      name = name.split('.').map((part) => part.trim()).join(' ');
+    }
+    // Capitalize the first letter of each word
+    name = name.split(' ').map((word) => word.toUpperCase().substring(0, 1) + word.substring(1).toLowerCase()).join(' ');
+    return name;
+  }
+
+  String emailToUsername(String email) {
+    // Get the display name from the email
+    String displayName = emailToDisplayName(email);
+
+    // Remove any special characters or spaces
+    String username = displayName.replaceAll(RegExp(r'[^a-zA-Z0-9_]'), '');
+
+    // Enforce lowercase letters
+    username = username.toLowerCase();
+
+    // Handle cases where the username is too long or empty
+    if (username.length > 30) {
+      username = username.substring(0, 30); // Truncate to 30 characters
+    } else if (username.isEmpty) {
+      username = "user" + randomNumericString(5); // Generate a unique username
+    }
+
+    return username;
+  }
+
+// Helper function to generate a random string of numbers
+  String randomNumericString(int length) {
+    final random = Random();
+    final codes = Iterable.generate(length, (_) => random.nextInt(10)).map((n) => n.toString());
+    return codes.join();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -66,10 +113,23 @@ class RegisterPageState extends State<RegisterPage> {
                       onPressed: () async {
                         isLoading = true;
                         try {
-                          await FirebaseAuth.instance
+                          var credential = await FirebaseAuth.instance
                               .createUserWithEmailAndPassword(
                                   email: usernameCtl.text,
                                   password: passwordCtl.text);
+
+                          // Create the user data
+                          var uid = credential.user!.uid;
+                          await FirebaseFirestore.instance
+                              .collection("users")
+                              .doc(uid)
+                              .set({
+                                "displayName": emailToDisplayName(usernameCtl.text),
+                                "id" : uid,
+                                "pfpUrl" : "",
+                                "username" : emailToUsername(usernameCtl.text),
+                                "friends" : []
+                              });
                         } on FirebaseAuthException catch (e) {
                           switch (e.code) {
                             case "ERROR_INVALID_EMAIL":
