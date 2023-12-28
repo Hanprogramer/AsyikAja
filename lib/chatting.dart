@@ -1,16 +1,19 @@
+import 'dart:async';
+
 import 'package:asyikaja/controls/chat_item.dart';
 import 'package:asyikaja/messages.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
 class ChatMessageData {
+  String id;
   String from, content;
   Timestamp timestamp;
   final bool isMe;
 
-  ChatMessageData(this.from, this.content, this.timestamp, this.isMe);
+  ChatMessageData(this.id, this.from, this.content, this.timestamp, this.isMe);
 
-  String getTimeString(){
+  String getTimeString() {
     return DateTime.parse(timestamp.toDate().toString()).toString();
   }
 }
@@ -29,10 +32,67 @@ class _ChattingPageState extends State<ChattingPage> {
   List<ChatMessageData> chats = [];
   String ourUserID = "xPnwcsW1kig1ab5Erq3K6AjJ43f2";
 
+  var chatFieldController = TextEditingController();
+  var scrollController = ScrollController();
+
   @override
   void initState() {
     super.initState();
-    readInitialMessages();
+    // readInitialMessages();
+
+    // StreamController<QuerySnapshot<Map<String,dynamic>>> sc = StreamController();
+    FirebaseFirestore.instance
+        .collection("messages")
+        .doc(widget.chatID)
+        .collection("messages")
+        .orderBy("timestamp", descending: false)
+        .limitToLast(100)
+        .snapshots()
+        .listen((event) {
+      for (var i in event.docs) {
+        var found = false;
+        for (var c in chats) {
+          if (c.id == i.id) {
+            found = true;
+            break;
+          }
+        }
+        if (!found) {
+          chats.add(ChatMessageData(i.id, i["from"], i["content"],
+              i["timestamp"], i["from"] == ourUserID));
+        }
+        // print(i["content"]);
+      }
+
+      if (mounted) {
+        setState(() {
+          Future.delayed(const Duration(milliseconds: 100), () {
+            WidgetsBinding.instance.addPostFrameCallback((_) => _scrollDown());
+          });
+        });
+      }
+    });
+  }
+
+// This is what you're looking for!
+  void _scrollDown() {
+    setState(() {
+      scrollController.jumpTo(
+        scrollController.position.maxScrollExtent,
+      );
+    });
+  }
+
+  void sendMessage(String message) {
+    FirebaseFirestore.instance
+        .collection("messages")
+        .doc(widget.chatID)
+        .collection("messages")
+        .add({
+      "content": message,
+      "from": ourUserID,
+      "timestamp": Timestamp.now()
+    });
   }
 
   void readInitialMessages() async {
@@ -44,8 +104,8 @@ class _ChattingPageState extends State<ChattingPage> {
         .limitToLast(100)
         .get();
     for (var c in cht.docs) {
-      chats.add(ChatMessageData(
-          c["from"], c["content"], c["timestamp"], c["from"] == ourUserID));
+      chats.add(ChatMessageData(c.id, c["from"], c["content"], c["timestamp"],
+          c["from"] == ourUserID));
     }
     // Update UI
     setState(() {});
@@ -69,6 +129,7 @@ class _ChattingPageState extends State<ChattingPage> {
             )),
         body: Container(
             child: ListView.builder(
+                controller: scrollController,
                 itemCount: chats.length,
                 itemBuilder: (c, i) {
                   return ChatItem(
@@ -91,12 +152,16 @@ class _ChattingPageState extends State<ChattingPage> {
                           color: Colors.grey.shade50,
                           borderRadius:
                               const BorderRadius.all(Radius.circular(32))),
-                      child: const TextField(
-                          decoration: InputDecoration(
+                      child: TextField(
+                          controller: chatFieldController,
+                          decoration: const InputDecoration(
                               hintText: "Pesan", border: InputBorder.none))),
                 ),
                 ElevatedButton(
-                  onPressed: () {},
+                  onPressed: () {
+                    sendMessage(chatFieldController.text);
+                    chatFieldController.clear();
+                  },
                   style: ButtonStyle(
                       backgroundColor: MaterialStateProperty.all(
                           Theme.of(context).colorScheme.inversePrimary)),

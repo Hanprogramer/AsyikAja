@@ -81,7 +81,9 @@ class _MessagesPageState extends State<MessagesPage>
             fromUser.profilePicUrl, fromUser, lastMsg[0], lastMsg[1]));
       }
     }
-    setState(() {});
+    if(mounted) {
+      setState(() {});
+    }
   }
 
   Future<List<dynamic>> getLastMessage(String chatID) async {

@@ -1,6 +1,7 @@
 import 'package:asyikaja/home.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -72,6 +73,12 @@ class LoginPageState extends State<LoginPage> {
                               .signInWithEmailAndPassword(
                                   email: usernameCtl.text,
                                   password: passwordCtl.text);
+                          var pref = (await SharedPreferences.getInstance());
+                          pref.setString("email", usernameCtl.text);
+                          pref.setString("password", passwordCtl.text);
+                          var id = credential.user?.uid ?? "";
+                          pref.setString("userID", id);
+
                         } on FirebaseAuthException catch (e) {
                           if (e.code == 'user-not-found') {
                             errorMessage = 'No user found for that email.';
