@@ -51,6 +51,7 @@ class LoginPageState extends State<LoginPage> {
                     labelText: 'Email',
                   )),
               TextFormField(
+                  obscureText: true,
                   controller: passwordCtl,
                   decoration: const InputDecoration(
                     border: UnderlineInputBorder(),

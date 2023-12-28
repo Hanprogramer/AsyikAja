@@ -12,7 +12,12 @@
           "package_name": "com.asyikaja.asyikaja"
         }
       },
-      "oauth_client": [],
+      "oauth_client": [
+        {
+          "client_id": "365127484042-hun3cugihvvp978pu27kr5vl8fs6jbof.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
       "api_key": [
         {
           "current_key": "AIzaSyA1Mh2f-FKqlHlC7Yg6cTc7OqGnWX9coUM"
@@ -20,7 +25,12 @@
       ],
       "services": {
         "appinvite_service": {
-          "other_platform_oauth_client": []
+          "other_platform_oauth_client": [
+            {
+              "client_id": "365127484042-hun3cugihvvp978pu27kr5vl8fs6jbof.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
         }
       }
     }

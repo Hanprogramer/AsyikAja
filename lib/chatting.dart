@@ -1,49 +1,81 @@
 import 'package:asyikaja/controls/chat_item.dart';
+import 'package:asyikaja/messages.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
-class ChattingPage extends StatefulWidget {
-  final String title;
+class ChatMessageData {
+  String from, content;
+  Timestamp timestamp;
+  final bool isMe;
 
-  const ChattingPage({super.key, required this.title});
+  ChatMessageData(this.from, this.content, this.timestamp, this.isMe);
+
+  String getTimeString(){
+    return DateTime.parse(timestamp.toDate().toString()).toString();
+  }
+}
+
+class ChattingPage extends StatefulWidget {
+  final ChatUser user;
+  final String chatID;
+
+  const ChattingPage({super.key, required this.user, required this.chatID});
 
   @override
   State<ChattingPage> createState() => _ChattingPageState();
 }
 
 class _ChattingPageState extends State<ChattingPage> {
+  List<ChatMessageData> chats = [];
+  String ourUserID = "xPnwcsW1kig1ab5Erq3K6AjJ43f2";
+
+  @override
+  void initState() {
+    super.initState();
+    readInitialMessages();
+  }
+
+  void readInitialMessages() async {
+    var cht = await FirebaseFirestore.instance
+        .collection("messages")
+        .doc(widget.chatID)
+        .collection("messages")
+        .orderBy("timestamp", descending: false)
+        .limitToLast(100)
+        .get();
+    for (var c in cht.docs) {
+      chats.add(ChatMessageData(
+          c["from"], c["content"], c["timestamp"], c["from"] == ourUserID));
+    }
+    // Update UI
+    setState(() {});
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color.fromARGB(255, 201, 198, 189),
+        resizeToAvoidBottomInset: false,
+        backgroundColor: const Color.fromARGB(255, 201, 198, 189),
         appBar: AppBar(
             backgroundColor: Theme.of(context).colorScheme.inversePrimary,
             title: Row(
               children: [
-                CircleAvatar(
-                  child: Text(widget.title
-                      .split(" ")
-                      .reduce((value, element) => value[0] + element[0])),
-                ),
+                ChatUserAvatar(user: widget.user),
                 const SizedBox(
                   width: 12,
                 ),
-                Text(widget.title)
+                Text(widget.user.displayName)
               ],
             )),
-        body: SingleChildScrollView(
-            child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            ChatItem(message: "Hello!", time: "15:30", isMe: true),
-            ChatItem(message: "Hello", time: "15:30", isMe: false),
-            ChatItem(message: "How are you today?", time: "15:30", isMe: true),
-            ChatItem(
-                message:
-                    "I'm feeling really well actually! How about you? Are you feeling good?",
-                time: "15:30",
-                isMe: false),
-          ],
-        )),
+        body: Container(
+            child: ListView.builder(
+                itemCount: chats.length,
+                itemBuilder: (c, i) {
+                  return ChatItem(
+                      message: chats[i].content,
+                      time: chats[i].getTimeString(),
+                      isMe: chats[i].isMe);
+                })),
         bottomNavigationBar: Container(
             padding: const EdgeInsets.all(8),
             height: 70,
