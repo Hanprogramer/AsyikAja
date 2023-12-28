@@ -4,6 +4,9 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+/// Messages Page
+/// Place to find your friend's messages
+
 class MessagesPage extends StatefulWidget {
   const MessagesPage({super.key});
 
@@ -11,6 +14,8 @@ class MessagesPage extends StatefulWidget {
   State<MessagesPage> createState() => _MessagesPageState();
 }
 
+/// ChatMessage
+/// base object for all chats
 class ChatMessage {
   String chatID;
   String displayName;
@@ -23,6 +28,8 @@ class ChatMessage {
       this.chatID, this.displayName, this.pfpUrl, this.from, this.lastMessage, this.lastMessageTimeStamp);
 }
 
+/// ChatUser
+/// base class for all users in the app
 class ChatUser {
   String id, username, displayName;
   String profilePicUrl;
@@ -32,6 +39,7 @@ class ChatUser {
   ChatUser(this.id, this.username, this.displayName, this.profilePicUrl, {this.isFriend});
 }
 
+/// Helper class for Circle Avatar using custom user class
 class ChatUserAvatar extends StatelessWidget {
   final ChatUser user;
 
@@ -49,11 +57,13 @@ class ChatUserAvatar extends StatelessWidget {
   }
 }
 
+/// Message Page state
 class _MessagesPageState extends State<MessagesPage>
     with AutomaticKeepAliveClientMixin<MessagesPage> {
   String ourUserID = "";
   List<ChatMessage> messages = [];
 
+  /// Get user from their user ID only
   Future<ChatUser?> getChatUser(String id) async {
     var userData = await FirebaseFirestore.instance
         .collection("users")
@@ -69,6 +79,7 @@ class _MessagesPageState extends State<MessagesPage>
     return null;
   }
 
+  /// Get messages for our current user
   void getMessages() async {
     ourUserID = (await SharedPreferences.getInstance()).getString("userID") ?? "";
     var msgDocs = await FirebaseFirestore.instance
@@ -90,6 +101,7 @@ class _MessagesPageState extends State<MessagesPage>
     }
   }
 
+  /// Get last message in a message collection from firebase
   Future<List<dynamic>> getLastMessage(String chatID) async {
     var msgDocs = await FirebaseFirestore.instance
         .collection("messages")
@@ -109,6 +121,7 @@ class _MessagesPageState extends State<MessagesPage>
     return ["No chat messages", ""];
   }
 
+  /// Load initial messages in the beginning of the app
   @override
   void initState() {
     super.initState();
@@ -117,35 +130,40 @@ class _MessagesPageState extends State<MessagesPage>
 
   @override
   Widget build(BuildContext context) {
+    super.build(context);
     return Scaffold(
+        /// Floating action button
         floatingActionButton: FloatingActionButton(
           onPressed: () {
+            // Move to the create message page
             Navigator.push(context,
                 MaterialPageRoute(builder: (c) => const CreateMessagePage()));
           },
           child: const Icon(Icons.add),
         ),
-        body: Container(
-            child: ListView.builder(
-                itemCount: messages.length,
-                itemBuilder: (context, index) {
-                  return ListTile(
-                      title: Text(messages[index].displayName),
-                      subtitle: Text(messages[index].lastMessage),
-                      leading: ChatUserAvatar(user: messages[index].from),
-                      trailing: Text(messages[index].lastMessageTimeStamp),
-                      onTap: () {
-                        Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (c) => ChattingPage(
-                                      user: messages[index].from,
-                                      chatID: messages[index].chatID,
-                                    )));
-                      });
-                })));
+        /// Creates a list view from our custom data helper
+        body: ListView.builder(
+            itemCount: messages.length,
+            itemBuilder: (context, index) {
+              return ListTile(
+                  title: Text(messages[index].displayName),
+                  subtitle: Text(messages[index].lastMessage),
+                  leading: ChatUserAvatar(user: messages[index].from),
+                  trailing: Text(messages[index].lastMessageTimeStamp),
+                  onTap: () {
+                    /// Move to the chat screen with specific user and userID
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (c) => ChattingPage(
+                                  user: messages[index].from,
+                                  chatID: messages[index].chatID,
+                                )));
+                  });
+            }));
   }
 
+  /// So that the pages wont reload when switching tabs
   @override
   bool get wantKeepAlive => true;
 }

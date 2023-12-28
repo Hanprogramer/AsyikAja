@@ -5,6 +5,9 @@ import 'package:flutter/material.dart';
 
 import 'login.dart';
 
+/// Welcome page
+/// Includes menu to choose login or register
+
 class WelcomePage extends StatefulWidget {
   const WelcomePage({super.key});
 
@@ -74,6 +77,7 @@ class _WelcomePageState extends State<WelcomePage> {
         ));
   }
 
+  /// Automatically navigates to a different screen when successfully logged in
   @override
   void initState() {
     super.initState();

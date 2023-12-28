@@ -5,6 +5,9 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 import 'messages.dart';
 
+/// Add Friend page
+/// Allows user to search and add friends
+
 class AddFriendPage extends StatefulWidget {
   const AddFriendPage({super.key});
 
@@ -27,6 +30,7 @@ class _AddFriendPageState extends State<AddFriendPage> {
     }();
   }
 
+  /// Search for users in the database based on the username.
   void search(String query) async {
     setState(() {
       isLoading = true;

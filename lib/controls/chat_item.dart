@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 
+/// Chat Item
+/// helper class to display message
+
 class ChatItem extends StatelessWidget {
   final String message;
   final String time;

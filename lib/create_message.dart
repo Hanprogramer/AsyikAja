@@ -5,6 +5,9 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'chatting.dart';
 import 'messages.dart';
 
+/// CreateMessage page
+/// Allows user to create a new message for a specific user ID
+
 class CreateMessagePage extends StatefulWidget {
   const CreateMessagePage({super.key});
 
@@ -27,6 +30,7 @@ class _CreateMessagePageState extends State<CreateMessagePage> {
           userData.docs[0]["displayName"], userData.docs[0]["pfpUrl"]);
       return user;
     }
+    return null;
   }
 
   @override
@@ -35,6 +39,7 @@ class _CreateMessagePageState extends State<CreateMessagePage> {
     getFriends();
   }
 
+  /// Load friends from the database
   void getFriends() async {
     ourUserID =
         (await SharedPreferences.getInstance()).getString("userID") ?? "";
@@ -45,6 +50,7 @@ class _CreateMessagePageState extends State<CreateMessagePage> {
 
     var friendIDs = userData["friends"] as List<dynamic>;
 
+    /// Iterate through every single data and adds it to our app
     for (var f in friendIDs) {
       var friend = await getChatUser(f);
       if (friend == null) continue;
@@ -72,6 +78,7 @@ class _CreateMessagePageState extends State<CreateMessagePage> {
             }));
   }
 
+  /// Check if a person has chat with the other person
   Future<String?> checkHasChat(String uid) async {
     var result = await FirebaseFirestore.instance
         .collection("messages")
@@ -83,6 +90,8 @@ class _CreateMessagePageState extends State<CreateMessagePage> {
     return result.docs[0].id;
   }
 
+  /// Create a new chat in the database
+  /// Use existing if already exist
   createChat(BuildContext context, ChatUser user) async {
     var existingChat = await checkHasChat(user.id);
     if (existingChat != null) {

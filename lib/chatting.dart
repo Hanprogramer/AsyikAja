@@ -6,6 +6,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+/// Helper class for displaying chat in the app
 class ChatMessageData {
   String id;
   String from, content;
@@ -18,6 +19,9 @@ class ChatMessageData {
     return DateTime.parse(timestamp.toDate().toString()).toString();
   }
 }
+
+/// Chatting Page
+/// Where people can talk in real time
 
 class ChattingPage extends StatefulWidget {
   final ChatUser user;
@@ -41,15 +45,22 @@ class _ChattingPageState extends State<ChattingPage> {
     super.initState();
 
     () async {
+      // Load user ID
       ourUserID =
           (await SharedPreferences.getInstance()).getString("userID") ?? "";
+
+      // Load the data from the database
       FirebaseFirestore.instance
           .collection("messages")
           .doc(widget.chatID)
           .collection("messages")
+          // sort by time
           .orderBy("timestamp", descending: false)
+          // limit to last 100 messages
           .limitToLast(100)
+          // load the data
           .snapshots()
+          // listen every time there's new messages
           .listen((event) {
         for (var i in event.docs) {
           var found = false;
@@ -59,14 +70,15 @@ class _ChattingPageState extends State<ChattingPage> {
               break;
             }
           }
+          // If not exists then add the new message
           if (!found) {
             chats.add(ChatMessageData(i.id, i["from"], i["content"],
                 i["timestamp"], i["from"] == ourUserID));
           }
-          // print(i["content"]);
         }
 
         if (mounted) {
+          // Update the message delayed so it has time to load
           setState(() {
             Future.delayed(const Duration(milliseconds: 100), () {
               WidgetsBinding.instance
@@ -78,7 +90,7 @@ class _ChattingPageState extends State<ChattingPage> {
     }();
   }
 
-// This is what you're looking for!
+  /// Scroll to the most bottom of the screen
   void _scrollDown() {
     setState(() {
       scrollController.jumpTo(
@@ -131,16 +143,15 @@ class _ChattingPageState extends State<ChattingPage> {
                 Text(widget.user.displayName)
               ],
             )),
-        body: Container(
-            child: ListView.builder(
-                controller: scrollController,
-                itemCount: chats.length,
-                itemBuilder: (c, i) {
-                  return ChatItem(
-                      message: chats[i].content,
-                      time: chats[i].getTimeString(),
-                      isMe: chats[i].isMe);
-                })),
+        body: ListView.builder(
+            controller: scrollController,
+            itemCount: chats.length,
+            itemBuilder: (c, i) {
+              return ChatItem(
+                  message: chats[i].content,
+                  time: chats[i].getTimeString(),
+                  isMe: chats[i].isMe);
+            }),
         bottomNavigationBar: Container(
             padding: const EdgeInsets.all(8),
             height: 70,

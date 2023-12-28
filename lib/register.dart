@@ -6,6 +6,9 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+/// Register page
+/// Creates new user and sets it to the database
+
 class RegisterPage extends StatefulWidget {
   const RegisterPage({super.key});
 
@@ -19,7 +22,10 @@ class RegisterPageState extends State<RegisterPage> {
   TextEditingController usernameCtl = TextEditingController(),
       passwordCtl = TextEditingController();
 
+  /// In case of errors
   String errorMessage = "";
+
+  /// Convert an email string to display name automatically
   String emailToDisplayName(String email) {
     // Split the email address into parts
     final parts = email.split('@');
@@ -38,6 +44,8 @@ class RegisterPageState extends State<RegisterPage> {
     return name;
   }
 
+  /// Converts an email string to username
+  /// followed with random numbers in case everything is too long
   String emailToUsername(String email) {
     // Get the display name from the email
     String displayName = emailToDisplayName(email);
@@ -58,7 +66,7 @@ class RegisterPageState extends State<RegisterPage> {
     return username;
   }
 
-// Helper function to generate a random string of numbers
+  /// Helper function to generate a random string of numbers
   String randomNumericString(int length) {
     final random = Random();
     final codes = Iterable.generate(length, (_) => random.nextInt(10)).map((n) => n.toString());
@@ -68,6 +76,7 @@ class RegisterPageState extends State<RegisterPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      /// Theme for the page
       backgroundColor: Theme.of(context).colorScheme.inversePrimary,
       appBar: AppBar(
         backgroundColor: Theme.of(context).colorScheme.inversePrimary,
@@ -171,9 +180,6 @@ class RegisterPageState extends State<RegisterPage> {
                           isLoading = false;
                         }
                         setState(() {});
-
-                        // Navigator.pushAndRemoveUntil(context,
-                        //     MaterialPageRoute(builder: (context) => const HomePage()), (route)=>false);
                       },
                       child: const Padding(
                           padding: EdgeInsets.all(16), child: Text("Login"))),

@@ -5,6 +5,9 @@ import 'package:asyikaja/welcome.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
+/// HomePage
+/// Base container for the messages, add friends, and the settings menu
+
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
 

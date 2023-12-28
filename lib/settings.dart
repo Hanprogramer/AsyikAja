@@ -7,6 +7,9 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 import 'welcome.dart';
 
+/// Settings page
+/// Allow users to change settings of their account
+
 class SettingsPage extends StatefulWidget {
   const SettingsPage({super.key});
 

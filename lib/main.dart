@@ -6,18 +6,15 @@ import 'package:flutter/material.dart';
 import 'welcome.dart';
 import 'firebase_options.dart';
 
+/// Main app code
 void main() async {
-
+  // Initialize flutter
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
 
-
-
-// Ideal time to initialize
-//   await FirebaseAuth.instance.useAuthEmulator('localhost', 9099);
-//...
+  // Start the app
   runApp(const MyApp());
 }
 
@@ -35,6 +32,7 @@ class MyApp extends StatelessWidget {
             seedColor: const Color.fromARGB(255, 255, 199, 0)),
         useMaterial3: true,
       ),
+      /// Load the welcome page
       home: const WelcomePage(),
     );
   }
