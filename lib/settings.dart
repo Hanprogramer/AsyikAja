@@ -1,11 +1,10 @@
-import 'package:asyikaja/main.dart';
+import 'package:asyikaja/about.dart';
 import 'package:asyikaja/messages.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-import 'welcome.dart';
 
 /// Settings page
 /// Allow users to change settings of their account
@@ -70,14 +69,14 @@ class _SettingsPageState extends State<SettingsPage> {
           const SizedBox(
             height: 30,
           ),
-          ListTile(
+          const ListTile(
             leading: CircleAvatar(
               backgroundColor: Colors.grey,
               child: Icon(Icons.camera),
             ),
             title: Text("Ganti Foto Profil"),
           ),
-          ListTile(
+          const ListTile(
             leading: CircleAvatar(
               backgroundColor: Colors.grey,
               child: Icon(Icons.security),
@@ -85,21 +84,25 @@ class _SettingsPageState extends State<SettingsPage> {
             title: Text("Ganti Password"),
           ),
           ListTile(
-            leading: CircleAvatar(
+            // Show the about page
+            onTap: (){
+              Navigator.push(context, MaterialPageRoute(builder: (c)=>const AboutPage()));
+            },
+            leading: const CircleAvatar(
               backgroundColor: Colors.grey,
               child: Icon(Icons.info),
             ),
-            title: Text("Tentang Aplikasi"),
+            title: const Text("Tentang Aplikasi"),
           ),
           ListTile(
             onTap: () async {
               await FirebaseAuth.instance.signOut();
             },
-            leading: CircleAvatar(
+            leading: const CircleAvatar(
               backgroundColor: Colors.redAccent,
               child: Icon(Icons.logout),
             ),
-            title: Text("Log Out"),
+            title: const Text("Log Out"),
           ),
         ],
       ),

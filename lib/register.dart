@@ -1,6 +1,5 @@
 import 'dart:math';
 
-import 'package:asyikaja/home.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -60,7 +59,7 @@ class RegisterPageState extends State<RegisterPage> {
     if (username.length > 30) {
       username = username.substring(0, 30); // Truncate to 30 characters
     } else if (username.isEmpty) {
-      username = "user" + randomNumericString(5); // Generate a unique username
+      username = "user${randomNumericString(5)}"; // Generate a unique username
     }
 
     return username;
@@ -110,6 +109,7 @@ class RegisterPageState extends State<RegisterPage> {
               TextFormField(
                   controller: passwordCtl,
                   obscuringCharacter: "*",
+                  obscureText: true,
                   decoration: const InputDecoration(
                     border: UnderlineInputBorder(),
                     labelText: 'Password',
@@ -182,7 +182,7 @@ class RegisterPageState extends State<RegisterPage> {
                         setState(() {});
                       },
                       child: const Padding(
-                          padding: EdgeInsets.all(16), child: Text("Login"))),
+                          padding: EdgeInsets.all(16), child: Text("Daftar"))),
               Text(errorMessage)
             ]),
           )),

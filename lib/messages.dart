@@ -47,13 +47,27 @@ class ChatUserAvatar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    var initial = getInitials(user.displayName);
     return CircleAvatar(
       child: Text(user.profilePicUrl.isEmpty
-          ? user.displayName
-              .split(" ")
-              .reduce((value, element) => value[0] + element[0])
+          ? initial
           : user.profilePicUrl),
     );
+  }
+
+  String getInitials(String name) {
+    if (name.isEmpty) {
+      return ""; // Handle empty name case
+    }
+
+    List<String> words = name.split(" ");
+    String initials = "";
+
+    for (int i = 0; i < words.length; i++) {
+      initials += words[i][0].toUpperCase();
+    }
+
+    return initials;
   }
 }
 
@@ -68,6 +82,7 @@ class _MessagesPageState extends State<MessagesPage>
     var userData = await FirebaseFirestore.instance
         .collection("users")
         .where("id", isEqualTo: id)
+        .limit(1)
         .get();
 
     if (userData.docs.isNotEmpty) {
@@ -95,9 +110,9 @@ class _MessagesPageState extends State<MessagesPage>
         messages.add(ChatMessage(m.id, fromUser.displayName,
             fromUser.profilePicUrl, fromUser, lastMsg[0], lastMsg[1]));
       }
-    }
-    if(mounted) {
-      setState(() {});
+      if(mounted) {
+        setState(() {});
+      }
     }
   }
 
