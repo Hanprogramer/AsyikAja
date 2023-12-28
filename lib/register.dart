@@ -128,7 +128,8 @@ class RegisterPageState extends State<RegisterPage> {
                                 "id" : uid,
                                 "pfpUrl" : "",
                                 "username" : emailToUsername(usernameCtl.text),
-                                "friends" : []
+                                "friends" : [],
+                                "email" : usernameCtl.text
                               });
                         } on FirebaseAuthException catch (e) {
                           switch (e.code) {
