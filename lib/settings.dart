@@ -72,11 +72,11 @@ class _SettingsPageState extends State<SettingsPage> {
             onTap: () {
               showPictDialog();
             },
-            leading: CircleAvatar(
+            leading: const CircleAvatar(
               backgroundColor: Colors.grey,
               child: Icon(Icons.camera),
             ),
-            title: Text("Ganti Foto Profil"),
+            title: const Text("Ganti Foto Profil"),
           ),
           const ListTile(
             leading: CircleAvatar(
@@ -118,7 +118,7 @@ class _SettingsPageState extends State<SettingsPage> {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: Text("Set Foto Profil"),
+          title: const Text("Set Foto Profil"),
           content: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
@@ -132,7 +132,7 @@ class _SettingsPageState extends State<SettingsPage> {
           ),
           actions: [
             MaterialButton(
-                child: Text("Cancel"),
+                child: const Text("Cancel"),
                 onPressed: () {
                   Navigator.pop(context);
                 }),
