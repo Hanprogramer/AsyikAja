@@ -4,6 +4,7 @@ import 'package:asyikaja/home.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class RegisterPage extends StatefulWidget {
   const RegisterPage({super.key});
@@ -131,6 +132,13 @@ class RegisterPageState extends State<RegisterPage> {
                                 "friends" : [],
                                 "email" : usernameCtl.text
                               });
+
+                          // Menyimpan data
+                          var pref = (await SharedPreferences.getInstance());
+                          pref.setString("email", usernameCtl.text);
+                          pref.setString("password", passwordCtl.text);
+                          var id = credential.user?.uid ?? "";
+                          pref.setString("userID", id);
                         } on FirebaseAuthException catch (e) {
                           switch (e.code) {
                             case "ERROR_INVALID_EMAIL":

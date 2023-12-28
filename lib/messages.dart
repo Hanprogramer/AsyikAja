@@ -2,6 +2,7 @@ import 'package:asyikaja/chatting.dart';
 import 'package:asyikaja/create_message.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class MessagesPage extends StatefulWidget {
   const MessagesPage({super.key});
@@ -50,7 +51,7 @@ class ChatUserAvatar extends StatelessWidget {
 
 class _MessagesPageState extends State<MessagesPage>
     with AutomaticKeepAliveClientMixin<MessagesPage> {
-  String ourUserID = "xPnwcsW1kig1ab5Erq3K6AjJ43f2";
+  String ourUserID = "";
   List<ChatMessage> messages = [];
 
   Future<ChatUser?> getChatUser(String id) async {
@@ -69,9 +70,10 @@ class _MessagesPageState extends State<MessagesPage>
   }
 
   void getMessages() async {
+    ourUserID = (await SharedPreferences.getInstance()).getString("userID") ?? "";
     var msgDocs = await FirebaseFirestore.instance
         .collection("messages")
-        .where("users", arrayContains: "xPnwcsW1kig1ab5Erq3K6AjJ43f2")
+        .where("users", arrayContains: ourUserID)
         .get();
     for (var m in msgDocs.docs) {
       var fromUserID =

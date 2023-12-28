@@ -4,6 +4,7 @@ import 'package:asyikaja/controls/chat_item.dart';
 import 'package:asyikaja/messages.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class ChatMessageData {
   String id;
@@ -30,7 +31,7 @@ class ChattingPage extends StatefulWidget {
 
 class _ChattingPageState extends State<ChattingPage> {
   List<ChatMessageData> chats = [];
-  String ourUserID = "xPnwcsW1kig1ab5Erq3K6AjJ43f2";
+  String ourUserID = "";
 
   var chatFieldController = TextEditingController();
   var scrollController = ScrollController();
@@ -38,40 +39,43 @@ class _ChattingPageState extends State<ChattingPage> {
   @override
   void initState() {
     super.initState();
-    // readInitialMessages();
 
-    // StreamController<QuerySnapshot<Map<String,dynamic>>> sc = StreamController();
-    FirebaseFirestore.instance
-        .collection("messages")
-        .doc(widget.chatID)
-        .collection("messages")
-        .orderBy("timestamp", descending: false)
-        .limitToLast(100)
-        .snapshots()
-        .listen((event) {
-      for (var i in event.docs) {
-        var found = false;
-        for (var c in chats) {
-          if (c.id == i.id) {
-            found = true;
-            break;
+    () async {
+      ourUserID =
+          (await SharedPreferences.getInstance()).getString("userID") ?? "";
+      FirebaseFirestore.instance
+          .collection("messages")
+          .doc(widget.chatID)
+          .collection("messages")
+          .orderBy("timestamp", descending: false)
+          .limitToLast(100)
+          .snapshots()
+          .listen((event) {
+        for (var i in event.docs) {
+          var found = false;
+          for (var c in chats) {
+            if (c.id == i.id) {
+              found = true;
+              break;
+            }
           }
+          if (!found) {
+            chats.add(ChatMessageData(i.id, i["from"], i["content"],
+                i["timestamp"], i["from"] == ourUserID));
+          }
+          // print(i["content"]);
         }
-        if (!found) {
-          chats.add(ChatMessageData(i.id, i["from"], i["content"],
-              i["timestamp"], i["from"] == ourUserID));
-        }
-        // print(i["content"]);
-      }
 
-      if (mounted) {
-        setState(() {
-          Future.delayed(const Duration(milliseconds: 100), () {
-            WidgetsBinding.instance.addPostFrameCallback((_) => _scrollDown());
+        if (mounted) {
+          setState(() {
+            Future.delayed(const Duration(milliseconds: 100), () {
+              WidgetsBinding.instance
+                  .addPostFrameCallback((_) => _scrollDown());
+            });
           });
-        });
-      }
-    });
+        }
+      });
+    }();
   }
 
 // This is what you're looking for!
