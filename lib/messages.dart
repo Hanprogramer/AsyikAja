@@ -26,7 +26,9 @@ class ChatUser {
   String id, username, displayName;
   String profilePicUrl;
 
-  ChatUser(this.id, this.username, this.displayName, this.profilePicUrl);
+  bool? isFriend;
+
+  ChatUser(this.id, this.username, this.displayName, this.profilePicUrl, {this.isFriend});
 }
 
 class ChatUserAvatar extends StatelessWidget {
