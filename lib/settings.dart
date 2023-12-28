@@ -5,7 +5,6 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-
 /// Settings page
 /// Allow users to change settings of their account
 
@@ -69,7 +68,10 @@ class _SettingsPageState extends State<SettingsPage> {
           const SizedBox(
             height: 30,
           ),
-          const ListTile(
+          ListTile(
+            onTap: () {
+              showPictDialog();
+            },
             leading: CircleAvatar(
               backgroundColor: Colors.grey,
               child: Icon(Icons.camera),
@@ -85,8 +87,9 @@ class _SettingsPageState extends State<SettingsPage> {
           ),
           ListTile(
             // Show the about page
-            onTap: (){
-              Navigator.push(context, MaterialPageRoute(builder: (c)=>const AboutPage()));
+            onTap: () {
+              Navigator.push(context,
+                  MaterialPageRoute(builder: (c) => const AboutPage()));
             },
             leading: const CircleAvatar(
               backgroundColor: Colors.grey,
@@ -106,6 +109,50 @@ class _SettingsPageState extends State<SettingsPage> {
           ),
         ],
       ),
+    );
+  }
+
+  void showPictDialog() {
+    var textController = TextEditingController();
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text("Set Foto Profil"),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              TextField(
+                controller: textController,
+                decoration: const InputDecoration(
+                  hintText: "Image URL",
+                ),
+              )
+            ],
+          ),
+          actions: [
+            MaterialButton(
+                child: Text("Cancel"),
+                onPressed: () {
+                  Navigator.pop(context);
+                }),
+            MaterialButton(
+                child: const Text("Save"),
+                onPressed: () async {
+                  String ourUserId = (await SharedPreferences.getInstance())
+                          .getString("userID") ??
+                      "";
+                  await FirebaseFirestore.instance
+                      .collection("users")
+                      .doc(ourUserId)
+                      .update({"pfpUrl": textController.text});
+                  Future.delayed(const Duration(), (){
+                    Navigator.pop(context);
+                  });
+                }),
+          ],
+        );
+      },
     );
   }
 }

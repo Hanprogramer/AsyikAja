@@ -49,9 +49,21 @@ class ChatUserAvatar extends StatelessWidget {
   Widget build(BuildContext context) {
     var initial = getInitials(user.displayName);
     return CircleAvatar(
-      child: Text(user.profilePicUrl.isEmpty
-          ? initial
-          : user.profilePicUrl),
+      child:
+        user.profilePicUrl.isEmpty
+            ? Text(initial)
+            : Container(
+          width: 150,
+          height: 150,
+          decoration: BoxDecoration(
+            shape: BoxShape.circle,
+            color: Colors.white,
+            image: DecorationImage(
+              fit: BoxFit.cover,
+              image: NetworkImage(user.profilePicUrl),
+            ),
+          ),
+        ),
     );
   }
 
